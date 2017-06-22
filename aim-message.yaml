@@ -1,0 +1,104 @@
+swagger: '2.0'
+info:
+  description: >-
+    AIM 智能营销系统 消息服务
+  version: 1.0.0
+  title: AIM-Message API
+  contact:
+    email: shixiaocong@sunlight.bz
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: localhost:4010
+basePath: /message/v1
+tags:
+  - name: base
+    description: 基础服务
+  - name: account
+    description: 账户相关服务
+  - name: call
+    description: 外呼管理
+  - name: pay
+    description: 账单与支付相关
+    
+  - name: admin
+    description: 后台管理
+    
+schemes:
+  - http
+paths:
+  /callstate:
+    get:
+      tags:
+        - call
+      summary: '推送通话状态'
+      description: '推送通话状态callee-answered/hangup'
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: uid
+          in: query
+          description: '用户ID'
+          required: true
+          type: string
+        - name: secretId
+          in: query
+          description: '密号ID'
+          required: true
+          type: string
+        - name: sessionId
+          in: query
+          description: '会话ID'
+          required: true
+          type: string  
+        - name: state
+          in: query
+          description: '状态 callee-answered/hangup'
+          required: true
+          type: string            
+      responses:
+        '200':
+          description: 'successful operation ' 
+         
+  
+  /balance:
+    get:
+      tags:
+        - account
+      summary: '余额提醒'
+      description: '余额提醒'
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: uid
+          in: query
+          description: '用户ID'
+          required: true
+          type: string
+        - name: 'limitAmount'
+          in: query
+          description: '最低限制金额'
+          required: true
+          type: string           
+        - name: amount
+          in: query
+          description: '金额'
+          required: true
+          type: string          
+      responses:
+        '200':
+          description: 'successful operation'
+
+        
+        
+      
+      
+      
+        
+    

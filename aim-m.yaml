@@ -1,0 +1,1629 @@
+swagger: '2.0'
+info:
+  description: >-
+    AIM 智能营销系统
+  version: 1.0.0
+  title: AIM-Marketing API
+  contact:
+    email: shixiaocong@sunlight.bz
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: localhost:4010
+basePath: /marketing/v1
+tags:
+  - name: base
+    description: 基础服务
+  - name: account
+    description: 账户相关服务
+  - name: call
+    description: 外呼管理
+  - name: pay
+    description: 账单与支付相关
+    
+  - name: admin
+    description: 后台管理
+    
+schemes:
+  - http
+paths:
+  /login:
+    post:
+      tags:
+        - account
+      summary: 登录
+      description: ''
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: '客户登录'
+          required: true
+          schema:
+            required:
+              - userName
+              - password
+            properties:
+              userName:
+                type: string
+              password:
+                type: string
+              
+      responses:
+        '200':
+          description: '登录成功并返回当前登录用户信息'
+          schema:
+            $ref: '#/definitions/UseInfo'
+        '401':
+          description: '处理用户名或密码错误等'
+    
+  /logout:
+    get:
+      tags:
+        - account
+      summary: '退出'
+      description: ''
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: 'successful operation'
+
+  /check:
+    get:
+      tags:
+        - account
+      summary: '后台 cookie 检验是否已登录'
+      responses:
+        '200':
+          description: '当前用户已登录'  
+        '403':
+          description: '当前用户未登录'
+
+  /changePassword:
+    post:
+      tags:
+        - account
+      summary: '修改密码'
+      responses:
+        '200':
+          description: '修改成功'  
+        '403':
+          description: '修改失败，请检查原密码是否输入正确'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          schema:
+            required:
+              - userName
+              - password
+              - newPassword
+            properties:
+              userName:
+                type: string
+              password:
+                type: string
+              newPassword:
+                type: string
+        
+  /base/enum:
+    get:
+      tags:
+        - base
+      summary: '获取枚举'
+      description: '默认获取所有枚举数据'
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: 'successful operation ' 
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/KeyValueItem'          
+  
+  /account:
+    get:
+      tags:
+        - account
+      summary: '获取当前登录信息'
+      description: '获取当前登录信息包括用户与企业数据等等'
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: '当前登录用户信息等'
+          schema:
+            $ref: '#/definitions/UseInfo'
+            
+  /call/custom_properties:
+    get:
+      tags:
+        - call
+      summary: '获取自定义属性' 
+      description: '获取自定义属性' 
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json 
+      responses:
+        '200':
+          description: '获取自定义属性集合'
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/CustomProperties'
+    post:
+      tags:
+        - call
+      summary: '新增属性' 
+      description: '新增属性' 
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: '属性对象'
+          required: true
+          schema:
+           $ref: '#/definitions/CustomProperties'
+             
+      responses:
+        '200':
+          description: '操作成功'
+    put:
+      tags:
+        - call
+      summary: '更新属性' 
+      description: '更新属性' 
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: '更新属性'
+          required: true
+          schema:
+           $ref: '#/definitions/CustomProperties'
+             
+      responses:
+        '200':
+          description: '操作成功'
+      
+  /call/record:
+    get:
+      tags:
+        - call
+      summary: '获取通话记录'
+      description: '根据条件获取企业下通话记录'
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: callResult
+          in: query
+          description: '外呼效果'
+          required: false
+          type: integer
+        - name: languageTrickId
+          in: query
+          description: '话术ID'
+          required: false
+          type: integer  
+        - name: startTime
+          in: query
+          type: string
+          format: date-time
+        - name: endTime
+          in: query
+          type: string
+          format: date-time          
+        - name: pageSize
+          in: query
+          description: '每页展示数量'
+          required: true
+          type: integer
+        - name: currentPage
+          in: query
+          description: '当前页码'
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: '通话记录集合'
+          schema:
+            type: array
+            items:
+             $ref: '#/definitions/CallRecord'
+        '400':
+          description: '错误的参数传递'
+          
+          
+    
+    post:
+      tags:
+        - call
+      summary: '保存通话记录'
+      description: '保存通话记录'
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: '通话记录消息体'
+          required: true
+          schema:
+            $ref: '#/definitions/CallRecordDTO'
+      responses:
+        '200':
+          description: '通话记录集合'
+        '400':
+          description: '错误的参数传递'
+          
+  /call/customer/{secretId}:
+    get:
+      tags:
+        - call
+      summary: '获取客户留档信息'
+      description: '根据密号id获取客户留档信息'
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: secretId
+          in: path
+          description: '密号id'
+          required: true
+          type: string
+      responses:
+        '200':
+          description: '客户留档信息集合'
+          schema:
+            $ref: '#/definitions/customer'
+        '400':
+          description: '错误的参数传递'  
+          
+  /call/customer:
+    get:
+      tags:
+        - call
+      summary: '分页查询客户留档信息'
+      description: '分页客户留档信息'
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: name
+          in: query
+          description: '客户名称'
+          required: false
+          type: string
+        - name: mobile
+          in: query
+          description: '客户电话号码'
+          required: false
+          type: string
+        - name: appointmentDate
+          in: query
+          description: '客户电话号码'
+          required: false
+          type: string
+          format: date-time
+        - name: currentPage
+          in: query
+          description: '当前页数'
+          required: true
+          type: integer
+        - name: pageSize
+          in: query
+          description: '每页条数'
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: '客户留档信息集合'
+          schema:
+            $ref: '#/definitions/customerVo'
+        '400':
+          description: '错误的参数传递'
+          
+  /call/secretPool/public:
+    get:
+      tags:
+        - call
+      summary: '获取公共区信息'
+      description: '获取所有公共区有效信息'
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/
+      parameters:
+        - name: brandName
+          in: query
+          description: '品牌名称'
+          required: true
+          type: string
+        - name: area
+          in: query
+          description: '区域名称'
+          required: true
+          type: string
+      responses:
+        '200':
+          description: '公共区信息集合'
+          schema:
+            $ref: '#/definitions/secretPool'
+        '400':
+          description: '错误的参数传递' 
+          
+  /call/brand:
+    get:
+      tags:
+        - call
+      summary: '加载所有品牌'
+      description: '加载品牌下拉单'
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: '品牌信息集合'
+          schema:
+            $ref: '#/definitions/brandVo'
+        '400':
+          description: '错误的参数传递'  
+          
+  /call/excute:
+    get:
+      tags:
+        - call
+      summary: '拨打电话'
+      description: ''
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: secretId
+          in: query
+          description: '密号 ID'
+          required: true
+          type: string
+      responses:
+        '200':
+          description: '外呼结果 ( success / failed / disabled )'
+          schema:
+            $ref: '#/definitions/callExcuteMsg'
+          
+  /call/secretPool/private:
+    post:
+      tags:
+        - call
+      summary: '获取保留区信息'
+      description: '获取所有保留区有效信息'
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          description: '保留区查询条件消息体'
+          required: false
+          schema:
+            $ref: '#/definitions/keepSecretDTO'
+          
+      responses:
+        '200':
+          description: '保留区信息集合'
+          schema:
+            $ref: '#/definitions/keepSecret'
+        '400':
+          description: '错误的参数传递' 
+  
+
+  /call/language:
+    get:
+      tags:
+        - call
+      summary: '获取当前企业的所有话术信息'
+      description: '获取当前企业的所有话术信息'
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: '当前登陆企业的话术信息'
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/LanguageTrickVO'
+              
+  
+    post:
+      tags:
+        - call
+      summary: '新增话术'
+      description: '企业管理员新增话术'
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: '属性对象'
+          required: true
+          schema:
+           $ref: '#/definitions/LanguageTrickDTO'
+             
+      responses:
+        '200':
+          description: '操作成功'
+          
+    put:
+      tags:
+        - call
+      summary: '编辑话术'
+      description: '企业管理员编辑话术'
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: '属性对象'
+          required: true
+          schema:
+           $ref: '#/definitions/LanguageTrickDTO'
+             
+      responses:
+        '200':
+          description: '操作成功'
+          
+  '/call/language/{id}':      
+    delete:
+      tags:
+        - call
+      summary: '删除话术话术'
+      description: '管理员删除话术内容'
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: 'id'
+          in: 'path'
+          description: "默认对象"
+          required: true
+          type: string
+          
+      responses:
+        '200':
+          description: '操作成功'
+          
+  /call/language/default:      
+    put:
+      tags:
+        - call
+      summary: '设置默认话术'
+      description: '管理员设置默认话术内容'
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: "body"
+          in: "body"
+          description: "话术ti"
+          required: true
+          schema:
+           $ref: '#/definitions/LanguageTrickDTO'
+          
+      responses:
+        '200':
+          description: '操作成功'
+          
+  
+    get:
+      tags:
+        - call
+      summary: '获取默认话术'
+      description: '获取默认话术'
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: '操作成功'      
+          schema:
+           $ref: '#/definitions/LanguageTrickDTO'
+          
+    
+
+  /pay/receiptRecord:
+    get:
+      tags:
+        - pay
+      summary: '查询当前企业充值记录'
+      description: '查询当前企业充值记录及充值的客户'
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: type
+          in: query
+          description: '充值类型 0-支付宝 1-微信'
+          type: integer
+        - name: startPayTime
+          in: query
+          description: '开始充值时间'
+          type: string
+          format: date-time
+        - name: endPayTime
+          in: query
+          description: '结束充值时间'
+          type: string
+          format: date-time
+      responses:
+        '200':
+          description: '当前企业充值记录'
+          schema:
+            type: array
+            items:
+             $ref: '#/definitions/ReceiptRecord'
+  
+  /pay/consumeRecord:
+    get:
+      tags:
+        - pay
+      summary: '查询当前企业消费记录'
+      description: '查询当前企业消费详情'
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: type
+          in: query
+          description: '消费类型 0-月租费用 1-通话费用 2-保留费用 3-坐席费用'
+          type: integer
+          format: int32
+        - name: startConsumeTime
+          in: query
+          description: '消费时间'
+          type: string
+          format: date-time
+        - name: endConsumeTime
+          in: query
+          description: '消费时间'
+          type: string
+          format: date-time
+      responses:
+        '200':
+          description: '当前企业消费记录'
+          schema:
+            type: array
+            items:
+             $ref: '#/definitions/ConsumeRecord'
+             
+  /bill/monthBills:
+    get:
+      tags:
+        - pay
+      summary: '获取当前企业各年月帐单及相应 Id'
+      description: '企业 Id 可从 cookie 中获取'
+      operationId: 'getMonthBills'
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: '当前企业各年月帐单及 Id'
+          schema:
+            type: array
+            items:
+             $ref: '#/definitions/BillYear'
+
+  /bill/{billId}:
+    get:
+      tags:
+      - pay
+      summary: "获取帐单详情"
+      description: "主键查找"
+      operationId: "getBill"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "billId"
+        in: "path"
+        description: "帐单 Id"
+        required: true
+        type: string
+      responses:
+        200:
+          description: "成功查找到目标帐单"
+          schema:
+            $ref: '#/definitions/Bill'
+
+  /admin/category:
+    get:
+      tags:
+        - admin
+      summary: '获取字典项分类'
+      description: '默认获取所有分类'
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: categoryName
+          in: query
+          description: '查询的条件'
+          type: string
+      responses:
+        '200':
+          description: 'successful operation ' 
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/KeyValueCategory'
+              
+ 
+    post:
+      tags:
+        - admin
+      summary: '新增字典项分类'
+      description: '新增字典项分类'
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+        
+      parameters:
+        - name: "body"
+          in: "body"
+          description: "分类体"
+          required: true
+          schema:
+           $ref: '#/definitions/KeyValueCategory'
+      responses:
+        '200':
+          description: 'successful operation ' 
+          
+  /admin/item:        
+    post:
+      tags:
+        - admin
+      summary: '新增字典项内容'
+      description: '新增字典项内容'
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+        
+      parameters:
+        - name: "body"
+          in: "body"
+          description: "内容体"
+          required: true
+          schema:
+           $ref: '#/definitions/KeyValueItem'
+      responses:
+        '200':
+          description: 'successful operation ' 
+          
+    put:
+      tags:
+        - admin
+      summary: '更新字典项内容'
+      description: '跟新字典项内容'
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+        
+      parameters:
+        - name: "body"
+          in: "body"
+          description: "内容体"
+          required: true
+          schema:
+           $ref: '#/definitions/KeyValueItem'
+      responses:
+        '200':
+          description: 'successful operation ' 
+          
+ 
+      
+  /admin/item/{id}:
+    get:
+      tags:
+        - admin
+      summary: '根据分类id查询字典项'
+      description: '查出分类下的内容'
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: "分类id"
+          required: true
+          type: string
+      responses:
+        '200':
+          description: 'successful operation ' 
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/KeyValueItem'
+              
+    delete:
+      tags:
+        - admin
+      summary: '删除字典项'
+      description: '删除字典项'
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: "内容id"
+          required: true
+          type: string
+      responses:
+        '200':
+          description: 'successful operation ' 
+          
+  /admin/enterprise:
+    get:
+      tags:
+        - admin
+      summary: '获取所有企业'
+      description: '默认获取所有企业'
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: 'successful operation ' 
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Enterprise'
+  
+  /admin/receiptRecord:            
+    post:
+      tags:
+        - admin
+      summary: '手动新增充值记录'
+      description: '新增充值记录'
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          description: "消息体"
+          required: true
+          schema:
+           $ref: '#/definitions/ReceiptRecordDTO'
+      responses:
+        '200':
+          description: 'successful operation ' 
+                    
+ 
+  /admin/receiptRecord/{currentPage}/{pageSize}:        
+    get:
+      tags:
+        - admin
+      summary: '分页查询手工充值记录'
+      description: '用户管理员查询企业充值记录'
+      operationId: ''
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: 'currentPage'
+          in: path
+          description: "当前页"
+          required: true
+          type: string
+        - name: 'pageSize'
+          in: path
+          description: "条数"
+          required: true
+          type: string
+      responses:
+        '200':
+          description: 'successful operation ' 
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/ReceiptRecord'
+              
+definitions:
+  UseInfo:
+    type: object
+    properties:
+      userInfoId:
+        type: string
+        description: '用户ID'
+      userInfoName:
+        type: string
+        description: '姓名'
+      userInfoGender:
+        type: integer
+        format: int32
+        description: '性别'
+      userInfoNumber:
+        type: string
+        description: '工号'
+      account:
+        type: string
+        description: '账户名'
+      enterpriseId:
+        type: string
+        description: '企业ID'
+      enterpriseName:
+        type: string
+        description: '企业名称'
+      industry:
+        type: integer
+        format: int32
+        description: '行业'
+      accountBalance:
+        type: number
+        format: double
+        description: '余额'
+      callQuantity:
+        type: integer
+        description: '有效通话数量'
+      calledQuantity:
+        type: integer
+        description: '已使用有效通话数量'
+        
+  CustomProperties:
+    type: object
+    required:
+      - value
+      - type
+      - createTime
+      - property
+    properties:
+      id:
+        type: string
+      code:
+        type: integer
+        format: int32
+      value:
+        type: string
+      type:
+        type: integer
+        format: int32
+        description: '自定义属性分类 0-保留区 1-通话记录'
+      status:
+        type: integer
+        format: int32
+        description: '状态 0-有效 1-无效'
+      createTime:
+        type: string
+        format: date-time
+      property:
+        type: integer
+        format: int32
+        description: '自定义属性类型'  
+        
+  CallRecord:
+    type: object
+    required:
+      - id
+      - record
+    properties:
+      id:
+        type: string
+      secretId:
+        type: string
+        description: '密号ID'
+      languageTrickId:
+        type: string
+        description: '话术ID'
+      languageTrickTitle:
+        type: string
+        description: '话术标题'
+      callResult:
+        type: integer
+        format: int32
+        description: '外呼效果'
+      record:
+        type: string
+        description: '通话记录'
+      callTime:
+        type: string
+        format: date-time
+        description: '拨打时间'         
+      connectTime:
+        type: string
+        format: date-time
+        description: '接通时间'         
+      hangUpTime:
+        type: string
+        format: date-time
+        description: '挂断时间'                 
+      createTime:
+        type: string
+        format: date-time
+        description: '创建时间'                 
+      customPropertiesId1:
+        type: string
+        description: '自定义属性1 ID'
+      customPropertiesValue1:
+        type: string
+        description: '自定义属性1'        
+      customPropertiesId2:
+        type: string
+        description: '自定义属性2 ID'        
+      customPropertiesValue2:
+        type: string
+        description: '自定义属性2'                
+      customProperties3:
+        type: string
+        description: '自定义属性3'                
+      remark:
+        type: string
+      status:
+        type: integer
+        format: int32
+        description: '状态 0-有效 1-无效'
+        
+        
+  CallRecordDTO:
+    type: object
+    required:
+      - record
+    properties:
+      secretPoolId:
+        type: string
+        description: '密号池id'
+      keepSecretId:
+        type: string
+        description: '保留区id'
+      callRecordId:
+        type: string 
+        description: '外呼记录id'
+      secretId:
+        type: string
+        description: '密号ID'
+      languageTrickId:
+        type: string
+        description: '话术ID'
+      languageTrickTitle:
+        type: string
+        description: '话术标题'
+      callResult:
+        type: integer
+        format: int32
+        description: '外呼效果'
+      record:
+        type: string
+        description: '通话记录'
+      callTime:
+        type: string
+        format: date-time
+        description: '拨打时间'         
+      connectTime:
+        type: string
+        format: date-time
+        description: '接通时间'         
+      hangUpTime:
+        type: string
+        format: date-time
+        description: '挂断时间'                 
+      createTime:
+        type: string
+        format: date-time
+        description: '创建时间'                 
+      customPropertiesId1:
+        type: string
+        description: '自定义属性1 ID'
+      customPropertiesId2:
+        type: string
+        description: '自定义属性2 ID'        
+      customProperties3:
+        type: string
+        description: '自定义属性3'   
+      keepCustomPropertiesId1:
+        type: string
+        description: '保留区自定义属性1 ID'
+      keepCustomPropertiesId2:
+        type: string
+        description: '保留区自定义属性2 ID'
+      keepCustomProperties3:
+        type: string
+        description: '保留区自定义属性3'
+      remark:
+        type: string
+        description: '备注'
+      status:
+        type: integer
+        format: int32
+        description: '状态 0-有效 1-无效'
+      customerId: 
+        type: string
+        description: '客户id'
+      name: 
+        type: string
+        description: '客户姓名'
+      gender:
+        type: integer
+        description: '性别 0-男 1-女'
+      mobile:
+        type: string
+        description: '移动电话号码'
+      tel:
+        type: string
+        description: '固定电话号码'
+      appointmentTime:
+        type: string
+        format: date-time
+        description: '预约进店时间'
+      intentionVehicle:
+        type: string
+        description: '意向车型'
+      customerRemark:
+        type: string
+        description: '留档备注'
+      keepStatus:
+        type: integer
+        format: int32
+        description: '保留状态 0-保留 1-不保留'
+        
+  customer:
+    type: object
+    properties:
+      id:
+        type: string
+        description: 'id'
+      secretId:
+        type: string
+        description: '密号id'
+      name:
+        type: string
+        description: '客户名称'
+      gender:
+        type: integer
+        format: int32
+        description: '性别 0 男 1 女'
+      mobile:
+        type: string
+        description: '电话号码'
+      tel:
+        type: string
+        description: '固定电话'
+      appointmentDate:
+        type: string
+        format: date-time
+        description: '预约时间'
+      intentionVehicle:
+        type: string
+        description: '意向车型'
+      remark:
+        type: string
+        description: '备注'
+        
+  customerVo:
+    type: object
+    properties:
+      itemCount:
+        type: integer
+        description: '总条数'
+      customer:  
+        type: array
+        items:
+          $ref: '#/definitions/customer'
+        
+        
+  secretPool:
+    type: object
+    properties:
+      id:
+        type: string
+        description: 'id'
+      secretId:
+        type: string
+        description: '密号id'
+      ad:
+        type: string
+        description: 'ad号'
+      industryTag1:
+        type: string
+        description: '行业标签1'
+      industryTag2:
+        type: string
+        description: '行业标签2'
+      industryTag3:
+        type: string
+        description: '行业标签3'
+      industryTag4:
+        type: string
+        description: '行业标签4'
+      industryTag5:
+        type: string
+        description: '行业标签5'  
+      keepStatus:
+        type: integer
+        description: '0 公共 1 持有'
+      lastDialTime:
+        type: string
+        format: date-time
+        description: '最后通话时间'
+      status:
+        type: integer
+        format: int32
+        description: '0 有效 1 无效'
+        
+        
+  keepSecret:
+    type: object
+    properties:
+      id:
+        type: string
+        description: 'id'
+      secretId:
+        type: string
+        description: '密号id'
+      keepTime:
+        type: string
+        format: date-time
+        description: '保留时间'
+      freedTime:
+        type: string
+        format: date-time
+        description: '释放时间'
+      customPropertiesId1:
+        type: string
+        description: '自定义属性1id'
+      customPropertiesId2:
+        type: string
+        description: '自定义属性2id'
+      customProperties3:
+        type: string
+        description: '自定义属性3'  
+        
+        
+  keepSecretDTO:
+    type: object
+    properties:
+      brandName:
+        type: string
+        description: '品牌名称'
+      area:
+        type: string
+        description: '区域'
+      keepTime:
+        type: string
+        description: '保留日期'
+      keepDay:
+        type: integer
+        description: '保留天数'
+      customPropertiesId1:
+        type: string
+        description: '自定义属性1id'
+      customPropertiesId2:
+        type: string
+        description: '自定义属性2id'
+      customProperties3:
+        type: string
+        description: '自定义属性3'
+      currentPage:
+        type: string
+        description: '当前页码'
+      pageSize:
+        type: string
+        description: '每页条数'
+    
+
+  KeyValueItem:
+    type: object
+    properties:
+      name:
+        type: string
+        description: '枚举英文'
+      caption:
+        type: string
+        description: '枚举中文说明'
+      dictKey:
+        type: integer
+        format: int32
+        description: '枚举数字'
+      dictText:
+        type: string
+        description: '枚举文本'
+      id:
+        type: string
+        description: 'id'
+      categoryId:
+        type: string
+        description: '分类id'
+        
+  KeyValueCategoryDTO:
+    type: object
+    properties:
+      id:
+        type: string
+        description: '分类ID'
+      code:
+        type: string
+        description: '分类编号'
+      name:
+        type: integer
+        format: int32
+        description: '分类名称'
+      isBuiltIn:
+        type: string
+        description: '是否可以构建'
+      status:
+        type: string
+        description: '状态'
+      keyValueItems:
+        type: array
+        items:
+          $ref: '#/definitions/KeyValueItem' 
+          
+  KeyValueCategory:
+    type: object
+    properties:
+      id:
+        type: string
+        description: '分类ID'
+      code:
+        type: string
+        description: '分类编号'
+      name:
+        type: integer
+        format: int32
+        description: '分类名称'
+      isBuiltIn:
+        type: string
+        description: '是否可以构建'
+      status:
+        type: string
+        description: '状态'
+     
+            
+  ReceiptRecord:
+    type: object
+    properties:
+      id:
+        type: string
+        description: 'id'
+      type:
+        type: integer
+        format: int32
+        description: '0-支付宝 1-微信'
+      pay_time:
+        type: string
+        description: '充值日期'
+      account:
+        type: integer
+        format: int32
+        description: '充值金额'
+      giftAccount:
+        type: integer
+        format: int32
+        description: '礼品金额'
+      currentAccount:
+        type: integer
+        format: int32
+        description: '当前余额'
+  
+  ConsumeRecord:
+    type: object
+    properties:
+      userInfoId:
+        type: string
+        description: '用户id'
+      id:
+        type: string
+        description: 'id'
+      type:
+        type: integer
+        format: int32
+        description: '0-月租费用 1-通话费用 2-保留费用 3-坐席费用'
+      consume_time:
+        type: string
+        description: '消费日期'
+      enterprise_id:
+        type: integer
+        format: int32
+        description: "企业id"
+      account:
+        type: integer
+        format: int32
+        description: '消费金额'
+      currentAccount:
+        type: integer
+        format: int32
+        description: '当前余额'
+        
+  BillMonth:
+    type: object
+    properties:
+      month:
+        type: string
+        description: '月份'
+      billId:
+        type: string
+        description: '月帐单 Id'
+
+  BillYear:
+    type: object
+    properties:
+      year:
+        type: string
+        description: '年份'
+      months:
+        type: array
+        description: '相关月份'
+        items:
+          $ref: '#/definitions/BillMonth'
+
+  Bill:
+    type: object
+    properties:
+      callPrice:
+        type: number
+        format: double
+        description: '通话单价'
+      callQuantity:
+        type: integer
+        description: '通话次数'
+      callSubtotal:
+        type: number
+        format: double
+        description: '通话小计'
+      keepPrice:
+        type: number
+        format: double
+        description: '保留单价'
+      keepDay:
+        type: integer
+        description: '保留人天'
+      keepSubtotal:
+        type: number
+        format: double
+        description: '保留小计'
+      seatPrice:
+        type: number
+        format: double
+        description: '坐席单价'
+      seatQuantity:
+        type: integer
+        description: '坐席次数'
+      seatSubtotal:
+        type: number
+        format: double
+        description: '坐席小计'
+      baseCost:
+        type: number
+        format: double
+        description: '基础费用'
+      totalAmount:
+        type: number
+        format: double
+        description: '费用合计'
+      baseCallQuantity:
+        type: integer
+        description: '免费通话次数'
+      baseSeatQuantity:
+        type: integer
+        description: '免费坐席数'
+     
+        
+  LanguageTrick:
+    type: object
+    properties:
+      id:
+        type: string
+        description: '话术id'
+      enterpriseId:
+        type: string
+        description: '企业id'
+      content:
+        type: string
+        description: '描述'
+      title:
+        type: string
+        description: '标题'
+      status:
+        type: integer
+        description: '状态'
+        
+  LanguageTrickVO:
+    type: object
+    properties:
+      id:
+        type: string
+        description: '话术id'
+      enterpriseId:
+        type: string
+        description: '企业id'
+      content:
+        type: string
+        description: '描述'
+      title:
+        type: string
+        description: '标题'
+      status:
+        type: integer
+        description: '状态'
+      defaultLangugeTrick:  
+        type: object
+        properties:
+          id:
+            type: string
+            description: "默认id"
+          langugeTrickId: 
+            type: string
+            description:  "话术id"
+            
+  LanguageTrickDTO:
+    type: object
+    properties:
+      id:
+        type: string
+        description: '话术id'
+      enterpriseId:
+        type: string
+        description: '企业id'
+      content:
+        type: string
+        description: '描述'
+      title:
+        type: string
+        description: '标题'
+      status:
+        type: integer
+        description: '状态'
+        
+  Enterprise:
+    type: object
+    properties:
+      id:
+        type: string
+        description: '企业id'
+      code:
+        type: string
+        description: '企业编号'
+      name:
+        type: integer
+        format: int32
+        description: '企业名称'
+      shortName:
+        type: string
+        description: '简写名称'
+      industry:
+        type: integer 
+        format: int32
+        description: '行业'
+      address:
+        type: string
+        description: '地址'
+      tel:
+        type: string
+        description: '电话'
+  
+  
+  ReceiptRecordDTO:
+    type: object
+    properties:
+      account:
+        type: integer
+        format: int64
+        description: '充值金额'
+      giftAccount:
+        type: integer
+        format: int64
+        description: '礼品金额'
+      type:
+        type: integer
+        format: int32
+        description: '支付类型'
+      payTime:
+        type: string
+        format: date-time
+        description: '支付时间'
+      enterpriseId:
+        type: string
+        description: '企业id'
+        
+  brandVo:
+    type: object
+    properties:
+      id:
+        type: string
+        description: 'id'
+      name:
+        type: string
+        description: '品牌名称'
+      
+  callExcuteMsg:
+    type: object
+    properties:
+      msg:
+        type: string
+        description: 'success为成功,failed为失败,disabled为余额不足'
+        
+        
+      
+      
+      
+        
+    
