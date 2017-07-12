@@ -68,6 +68,10 @@ public abstract class AbstractXlsxWriter extends ExcelWriter
     private List<String> sheetRefs;
     private List<Writer> tempWriters;
 
+    static {
+        TEMP_EXCEL_PATH = System.getProperty("java.io.tmpdir");
+    }
+
     @Override
     public void init()
     {
